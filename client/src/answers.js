@@ -2,31 +2,36 @@ import React from "react";
 import cards from "./cardListFull";
 import { useState, useEffect } from "react";
 import Answer from "./answer";
-import { io } from "socket.io-client";
-const socket = io();
+import { socket } from "./socket";
 
-export default function Answers({currentUser}) {
+export default function Answers({ currentUser }) {
     //for selecting 5 cards messages
     const [cardAnswers, setCardAnswers] = useState([]);
     //sets state of a single card that was clicked
-    const [message, setMessage] = useState("");
+    const [message, setMessage] = useState();
 
     const [messages, setMessages] = useState([]);
 
     useEffect(() => {
         socket.on("message", (message) => {
+            console.log("&&&&&&&&&", message);
             setMessages((messages) => [...messages, message]);
             console.log("🐹", messages);
         });
     }, []);
 
     useEffect(() => {
-        socket.emit("send", message);
+        //add check here
+        if (typeof message !== "undefined") {
+            socket.emit("send", message);
+            console.log("message is not null", message);
+        } else {
+            console.log("message is null");
+        }
     }, [message]);
 
     const submit = async (e) => {
         setMessage(e);
-        // socket.emit("send", message);
         console.log("e", message);
     };
 
@@ -34,7 +39,7 @@ export default function Answers({currentUser}) {
         var copy = array[0].white.slice(0);
         return function () {
             if (copy.length < 1) {
-                // console.log("we are hee");
+                // console.log("we are here");
                 copy = array[0].white.slice(0);
             }
             const array = [];
@@ -86,9 +91,12 @@ export default function Answers({currentUser}) {
             <div className="playGround">
                 <div id="messages">
                     {console.log(" 🐈", messages)}
-                    {messages.map(({ text }, index) => (
+                    {messages.map(({ text, user }, index) => (
                         <div key={index}>
-                            <div>{text}</div>
+                            <div>
+                                {user.name}
+                                {text}
+                            </div>
                         </div>
                     ))}
                 </div>

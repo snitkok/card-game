@@ -2,16 +2,17 @@ import React from "react";
 import Cards from "./cards";
 import Answers from "./answers";
 import { useState, useEffect } from "react";
-import { io } from "socket.io-client";
-const socket = io();
 const username = prompt("what is your username");
+import { socket } from "./socket";
 
 export default function App() {
     const [users, setUsers] = useState([]);
     const [currentUser, setCurrentUser] = useState([]);
-    // const [numUser, setnumUser] = useState([]);
+    const [newUser, setNewUser] = useState([]);
 
     useEffect(() => {
+        //when user connects to the  server
+        //we emit username to the server
         socket.on("connect", () => {
             socket.emit("username", username);
         });
@@ -23,8 +24,9 @@ export default function App() {
 
         socket.on("connected", (user) => {
             setUsers((users) => [...users, user]);
+            setNewUser(user);
+            console.log("user", user);
         });
-
 
         socket.on("disconnected", (id) => {
             setUsers((users) => {
@@ -35,6 +37,8 @@ export default function App() {
 
     return (
         <div>
+            <h1>Hello {currentUser} </h1>
+            <h3>{newUser.name} joined the game</h3>
             <div>
                 <h6>Users online</h6>
                 <ul id="users">

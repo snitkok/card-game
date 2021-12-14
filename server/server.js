@@ -50,32 +50,41 @@ function selectRandom(array) {
 }
 
 io.on("connection", (socket) => {
+    console.log("socket.id", socket.id);
+    //when someone connects to the server we will invoke this callback
+    //when submits the username
     socket.on("username", (username) => {
         const user = {
             name: username,
             id: socket.id,
         };
         users[socket.id] = user;
+        //here we broadcast events to every connected user
         io.emit("connected", user);
         io.emit("users", Object.values(users));
         var chooser = selectRandom(cards);
-        console.log("chooser", chooser());
+        io.emit("chooser", chooser());
         console.log("^^^^^^^", users);
     });
 
+    //listen to when the user submits an answer(message card)
     socket.on("send", (message) => {
+        console.log("users[socket.id]", socket.id);
         io.emit("message", {
             text: message,
             user: users[socket.id],
         });
     });
 
-    // socket.on("startGame", () => {
-    //     var chooser = selectRandom(cards);
-    //     io.emit("selectCard", chooser);
-    //     console.log("chooser", chooser);
-    // });
+    //when user clicks next round
+    socket.on("nextGame", () => {
 
+        var chooser = selectRandom(cards);
+        io.emit("selectCard", chooser());
+        console.log("chooser 🌺 ", chooser);
+    });
+
+    //when user disconnects
     socket.on("disconnect", () => {
         const username = users[socket.id];
         delete users[socket.id];
