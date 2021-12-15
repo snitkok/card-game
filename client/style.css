@@ -2,8 +2,85 @@ body {
     background-color: ghostwhite;
 }
 
+.itemTwo {
+  
+    width: 95vw;
+    display: flex;
+    flex-direction: row;
+}
+
+.itemOne {
+    width: 95vw;
+    background-color: hotpink;
+    display: flex;
+    flex-direction: column;
+}
+
+.cardsContent {
+    background-color: black;
+    border-radius: 10%;
+    color: white;
+    width: 35vw;
+    height: 40vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.cardsContent button {
+    width: 5vw;
+    display: flex;
+    justify-content: flex-end;
+}
+.cardsContent hr {
+    width: 100%;
+}
+.cardsContent h2 {
+    margin: 5px;
+}
+
+.answers button {
+    width: 10vw;
+}
+.answers {
+    width: 60vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+}
+.answerOpt {
+    width: 55vw;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
 .playGround {
-    width: 500px;
-    height: 500px;
-    background-color: yellow;
+    width: 45vw;
+    height: 40vh;
+    background-color: black;
+    border-radius: 10%;
+}
+
+.singleAnswer {
+    background-color: white;
+    margin: 5px;
+    text-align: center;
+    width: 10vw;
+    height: 300px;
+}
+
+.singleAnswer h3,
+.singleAnswer h4 {
+    padding: 4px;
+}
+
+.playedCards{
+    background-color: white;
+    margin: 5px;
+    text-align: center;
+    width: 10vw;
+    height: 300px;
 }

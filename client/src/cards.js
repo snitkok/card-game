@@ -13,7 +13,6 @@ export default function Cards() {
 
         socket.on("selectCard", (chooser) => {
             setCardQuestion(chooser);
-            // socket.emit();
         });
     });
 
@@ -26,9 +25,14 @@ export default function Cards() {
     };
 
     return (
-        <>
-            <h1>Fill in the missing word: {cardQuestion}</h1>
-            <button onClick={() => nextGame()}>Next game</button>
-        </>
+        <div className="cards">
+          <div className="cardsContent">
+                <h1>Fill in the missing word</h1>
+                <hr/>
+                <h2>{cardQuestion}</h2>
+                <br />
+                <button onClick={() => nextGame()}>Next game</button>
+            </div>
+       </div>
     );
 }

@@ -2,14 +2,15 @@ import React from "react";
 import cards from "./cardListFull";
 import { useState, useEffect } from "react";
 import Answer from "./answer";
+import Likes from "./likes";
+
 import { socket } from "./socket";
 
-export default function Answers({ currentUser }) {
+export default function Answers() {
     //for selecting 5 cards messages
     const [cardAnswers, setCardAnswers] = useState([]);
     //sets state of a single card that was clicked
     const [message, setMessage] = useState();
-
     const [messages, setMessages] = useState([]);
 
     useEffect(() => {
@@ -29,6 +30,10 @@ export default function Answers({ currentUser }) {
             console.log("message is null");
         }
     }, [message]);
+
+    const likeCount = (userId) => {
+        socket.emit("likesCount", userId);
+    };
 
     const submit = async (e) => {
         setMessage(e);
@@ -87,33 +92,37 @@ export default function Answers({ currentUser }) {
     }
 
     return (
-        <div>
+        <div className="answers">
             <div className="playGround">
                 <div id="messages">
                     {console.log(" 🐈", messages)}
                     {messages.map(({ text, user }, index) => (
                         <div key={index}>
-                            <div>
+                            <div className="playedCards">
                                 {user.name}
+                                <Likes likeCount={likeCount} userId={user.id} />
                                 {text}
                             </div>
                         </div>
                     ))}
                 </div>
             </div>
-
-            {cardAnswers.map((answer, index) => (
-                <Answer
-                    key={answer + index}
-                    answer={answer}
-                    index={index}
-                    changedText={handleClick}
-                    submit={submit}
-                    setMessage={setMessage}
-                    message={message}
-                />
-            ))}
-            <button onClick={chooser}>Click me</button>
+            <div className="answerOpt">
+                {cardAnswers.map((answer, index) => (
+                    <Answer
+                        key={answer + index}
+                        answer={answer}
+                        index={index}
+                        changedText={handleClick}
+                        submit={submit}
+                        setMessage={setMessage}
+                        message={message}
+                    />
+                ))}
+            </div>
+            <div>
+                <button onClick={chooser}>Click me</button>
+            </div>
         </div>
     );
 }

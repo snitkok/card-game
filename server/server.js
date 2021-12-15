@@ -57,6 +57,7 @@ io.on("connection", (socket) => {
         const user = {
             name: username,
             id: socket.id,
+            counter: 0,
         };
         users[socket.id] = user;
         //here we broadcast events to every connected user
@@ -65,6 +66,26 @@ io.on("connection", (socket) => {
         var chooser = selectRandom(cards);
         io.emit("chooser", chooser());
         console.log("^^^^^^^", users);
+    });
+
+    socket.on("likesCount", (userId) => {
+        let allCounts = 0;
+        for (let user in users) {
+            if (users[user].id === userId) {
+                users[user].counter++;
+            }
+            allCounts += users[user].counter;
+            if (allCounts >= "number of users") {
+                // 1. find user with highest count
+                // 2. send winner to front with winner's answer
+                // 3. reset global counter and counter for each user
+                users[user].counter = 0;
+
+                // if user on front clicks "Continue the game" start function
+                // "chooser" to display new Question Card
+            }
+        }
+        console.log(users.length, allCounts);
     });
 
     //listen to when the user submits an answer(message card)
@@ -78,7 +99,6 @@ io.on("connection", (socket) => {
 
     //when user clicks next round
     socket.on("nextGame", () => {
-
         var chooser = selectRandom(cards);
         io.emit("selectCard", chooser());
         console.log("chooser 🌺 ", chooser);
