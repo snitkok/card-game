@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 
-const Likes = ({ likeCount, userId }) => {
+const Likes = ({ likeResults, userId }) => {
     const [isLiked, setIsLiked] = useState(false);
 
     const handleLike = () => {
         setIsLiked(!isLiked);
-        likeCount(userId);
+        likeResults(isLiked, userId);
     };
 
     return (

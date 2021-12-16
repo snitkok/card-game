@@ -12,45 +12,68 @@ export default function Answers() {
     //sets state of a single card that was clicked
     const [message, setMessage] = useState();
     const [messages, setMessages] = useState([]);
+    // const [gameResult, setGameResult] = useState({});
+    const [button, setButton] = useState(true);
 
     useEffect(() => {
         socket.on("message", (message) => {
-            console.log("&&&&&&&&&", message);
             setMessages((messages) => [...messages, message]);
-            console.log("🐹", messages);
         });
     }, []);
 
     useEffect(() => {
-        //add check here
         if (typeof message !== "undefined") {
             socket.emit("send", message);
-            console.log("message is not null", message);
         } else {
             console.log("message is null");
         }
     }, [message]);
 
-    const likeCount = (userId) => {
-        socket.emit("likesCount", userId);
+    const likeResults = (isLiked, userId) => {
+        let count = 0;
+
+        if (!isLiked) {
+            count++;
+            socket.emit("likesCount", userId, count);
+        } else if (isLiked) {
+            count--;
+            socket.emit("likesCount", userId, count);
+        }
+        socket.on("result", (result) => {
+            console.log("SOCKET result", result);
+            if (result.length) {
+                nextGame(result);
+                console.log("result678u0oo", result);
+            }
+        });
+        console.log(userId, count);
     };
 
-    const submit = async (e) => {
+    const nextGame = (result) => {
+        //if user confirms then socket.emit
+        console.log("result", result);
+        confirm(result);
+        if (confirm) {
+            setMessages([]);
+            socket.emit("nextGame");
+        }
+    };
+
+    const submit = (e) => {
         setMessage(e);
         console.log("e", message);
     };
 
     function selectRandom(array) {
-        var copy = array[0].white.slice(0);
+        let copy = array[0].white.slice(0);
         return function () {
             if (copy.length < 1) {
-                // console.log("we are here");
                 copy = array[0].white.slice(0);
             }
             const array = [];
             for (let i = 0; i < 5; i++) {
-                var index = Math.floor(Math.random() * copy.length);
-                var item = copy[index]["text"];
+                let index = Math.floor(Math.random() * copy.length);
+                let item = copy[index]["text"];
                 copy.splice(index, 1);
                 array.push(item);
             }
@@ -60,17 +83,14 @@ export default function Answers() {
         };
     }
 
-    var chooser = selectRandom(cards);
+    const chooser = selectRandom(cards);
 
     function addOne() {
-        var copy = cards[0].white.slice(0);
-        // console.log("copy", copy);
+        let copy = cards[0].white.slice(0);
         return function () {
-            // console.log("we are here");
-            var index = Math.floor(Math.random() * copy.length);
-            var item = copy[index];
+            let index = Math.floor(Math.random() * copy.length);
+            let item = copy[index];
             copy.splice(index, 1);
-            // console.log("🍀", item.text);
             return item.text;
         };
     }
@@ -87,20 +107,27 @@ export default function Answers() {
             }
             return setCardAnswers(newArray);
         });
+    }
 
-        // console.log("new array", newArray);
+    function handleButton() {
+        setButton(!button);
     }
 
     return (
         <div className="answers">
             <div className="playGround">
+                <h3></h3>
+                <hr />
                 <div id="messages">
                     {console.log(" 🐈", messages)}
                     {messages.map(({ text, user }, index) => (
-                        <div key={index}>
+                        <div key={index} className="playedCardsContainer">
                             <div className="playedCards">
                                 {user.name}
-                                <Likes likeCount={likeCount} userId={user.id} />
+                                <Likes
+                                    likeResults={likeResults}
+                                    userId={user.id}
+                                />
                                 {text}
                             </div>
                         </div>
@@ -121,7 +148,18 @@ export default function Answers() {
                 ))}
             </div>
             <div>
-                <button onClick={chooser}>Click me</button>
+                {button ? (
+                    <button
+                        onClick={() => {
+                            chooser();
+                            handleButton();
+                        }}
+                    >
+                        Get playing cards
+                    </button>
+                ) : (
+                    <p></p>
+                )}
             </div>
         </div>
     );

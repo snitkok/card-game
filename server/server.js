@@ -36,21 +36,21 @@ server.listen(process.env.PORT || 3001, function () {
 const users = {};
 
 function selectRandom(array) {
-    var copy = array[0].black.slice(0);
+    let copy = array[0].black.slice(0);
     return function () {
         if (copy.length < 1) {
-            console.log("we are hee");
+            // console.log("we are hee");
             copy = array[0].black.slice(0);
         }
-        var index = Math.floor(Math.random() * copy.length);
-        var item = copy[index];
+        let index = Math.floor(Math.random() * copy.length);
+        let item = copy[index];
         copy.splice(index, 1);
         return item.text;
     };
 }
 
 io.on("connection", (socket) => {
-    console.log("socket.id", socket.id);
+    // console.log("socket.id", socket.id);
     //when someone connects to the server we will invoke this callback
     //when submits the username
     socket.on("username", (username) => {
@@ -63,34 +63,69 @@ io.on("connection", (socket) => {
         //here we broadcast events to every connected user
         io.emit("connected", user);
         io.emit("users", Object.values(users));
-        var chooser = selectRandom(cards);
+        let chooser = selectRandom(cards);
         io.emit("chooser", chooser());
         console.log("^^^^^^^", users);
+        const userCount = Object.keys(users).length;
+        io.emit("userCount", userCount);
+        console.log("userCount", userCount);
     });
 
-    socket.on("likesCount", (userId) => {
-        let allCounts = 0;
+    socket.on("userCount", (userCount) => {
+        userCount = Object.keys(users).length;
+        io.emit("userCount", userCount);
+        console.log("another user  ", userCount);
+    });
+
+    socket.on("likesCount", (userId, count) => {
+        console.log("likesCount being emitted", userId, count);
+        let totalCounts = 0;
+        let result = "";
         for (let user in users) {
             if (users[user].id === userId) {
-                users[user].counter++;
+                users[user].counter += count;
             }
-            allCounts += users[user].counter;
-            if (allCounts >= "number of users") {
-                // 1. find user with highest count
-                // 2. send winner to front with winner's answer
-                // 3. reset global counter and counter for each user
-                users[user].counter = 0;
-
-                // if user on front clicks "Continue the game" start function
-                // "chooser" to display new Question Card
-            }
+            totalCounts += users[user].counter;
         }
-        console.log(users.length, allCounts);
+        console.log("updated tortal counts", totalCounts);
+        // if total count of likes among all users is equal to length of users object (we assume all users have voted)
+        if (totalCounts === Object.keys(users).length) {
+            // we create array of users from users object to be able to apply map function
+            const usersArray = Object.values(users);
+            // we extract max count of likes (count of likes that the most voted post has)
+            const maxCount = Math.max.apply(
+                Math,
+                usersArray.map((user) => user.counter)
+            );
+            // we create array of users that have max count of likes
+            const winnersArray = usersArray.filter(
+                (user) => user.counter === maxCount
+            );
+            // we extract from array of winners just winners names to add them to result string
+            const winnerNames = winnersArray.map((winner) => winner.name);
+            // we create two result strings based on how many users have collected max count of likes.
+            // If array of winners more than 1 (we have several players in winners array with max count of likes
+            if (winnersArray.length > 1) {
+                result = `We have a tie. Players ${winnerNames.join(
+                    " and "
+                )} have ${maxCount} vote(s)!!!
+Would you like to continue?`;
+            } else {
+                result = `The winner is ${winnerNames.join(
+                    ""
+                )} with ${maxCount} vote(s)!!!
+Would you like to continue?`;
+            }
+
+            // Send winner to front with winner's answer
+            io.emit("result", result);
+            console.log("just emitted results", result, users);
+        }
     });
 
     //listen to when the user submits an answer(message card)
     socket.on("send", (message) => {
-        console.log("users[socket.id]", socket.id);
+        // console.log("users[socket.id]", socket.id);
         io.emit("message", {
             text: message,
             user: users[socket.id],
@@ -99,9 +134,9 @@ io.on("connection", (socket) => {
 
     //when user clicks next round
     socket.on("nextGame", () => {
-        var chooser = selectRandom(cards);
+        let chooser = selectRandom(cards);
         io.emit("selectCard", chooser());
-        console.log("chooser 🌺 ", chooser);
+        // console.log("chooser 🌺 ", chooser);
     });
 
     //when user disconnects
@@ -110,7 +145,10 @@ io.on("connection", (socket) => {
         delete users[socket.id];
         io.emit("disconnected", socket.id);
         console.log(")))))^^", users);
+        userCount = Object.keys(users).length;
+        io.emit("userCount", userCount);
+        console.log("Usercount here is", userCount);
     });
 
-    console.log("users", users);
+    // console.log("users", users);
 });

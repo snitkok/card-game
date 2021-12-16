@@ -2,17 +2,19 @@ import React from "react";
 import Cards from "./cards";
 import Answers from "./answers";
 import { useState, useEffect } from "react";
-const username = prompt("what is your username");
+let username = prompt("what is your username");
 import { socket } from "./socket";
 
 export default function App() {
     const [users, setUsers] = useState([]);
     const [currentUser, setCurrentUser] = useState([]);
     const [newUser, setNewUser] = useState([]);
+    const [modal, setModal] = useState(true);
+    const [userCount, setUserCount] = useState();
+    const [waiting, setWaiting] = useState(false);
+    const [userName, setUserName] = useState("");
 
     useEffect(() => {
-        //when user connects to the  server
-        //we emit username to the server
         socket.on("connect", () => {
             socket.emit("username", username);
         });
@@ -20,6 +22,13 @@ export default function App() {
         socket.on("users", (users) => {
             setUsers(users);
             setCurrentUser(username);
+        });
+
+        socket.on("userCount", (userCount) => {
+            setUserCount(userCount);
+            if (userCount >= 2) {
+                setWaiting(false);
+            }
         });
 
         socket.on("connected", (user) => {
@@ -36,44 +45,74 @@ export default function App() {
     }, []);
 
     function gameStart() {
-        if (start) {
-            const username = prompt("what is your username");
-            if (usersCount < 3) {
-                setWaiting(true);
-            }
+        setModal(!modal);
+
+        if (userCount < 2) {
+            setWaiting(true);
+            console.log("userCount(;(;(;(;(;((;", userCount);
+        } else {
+            socket.emit(userCount);
         }
     }
 
     return (
         <div className="root">
-            {/* <div id="modalStart">
-                <div id="modal-content">
-                    <p className="text-4xl  p-8">Want to start the game</p>
-                    <br />
-                    <button onClick={() => {}}>Start</button>
+            {modal ? (
+                <div id="modalStart">
+                    <div id="modal-content">
+                        <h3>
+                            Cards Against Humanity is a fill-in-the-blank party
+                            game that turns your awkward personality and
+                            lackluster social skills into hours of fun! <br />
+                            Wow.
+                            <br /> The game is simple. Each round, computer asks
+                            a question from a black card, and everyone else
+                            answers with their funniest white card.
+                        </h3>
+                        <p>
+                            <b>Still want to start the game?</b>
+                        </p>
+                        <br />
+                        <button
+                            onClick={() => {
+                                gameStart();
+                            }}
+                        >
+                            Start
+                        </button>
+                    </div>
                 </div>
-            </div>
+            ) : (
+                <p></p>
+            )}
 
-            <div id="modalWait">
-                <div id="modal-content">
-                    <p className="text-4xl  p-8">Want to start the game</p>
-                    <br />
-                    <button onClick={() => {}}>Start</button>
+            {waiting ? (
+                <div id="modalWait">
+                    <div id="modal-content">
+                        <h3>Waiting for other users to join</h3>
+                        <h3>Now {userCount} users are online</h3>
+                    </div>
                 </div>
-            </div> */}
+            ) : (
+                <p></p>
+            )}
+
             <div className="itemOne">
                 <h1>Hello {currentUser} </h1>
-                <h3>{newUser.name} joined the game</h3>
+                <h3>
+                    <span className="newUserName">{newUser.name}</span> just
+                    joined the game
+                </h3>
                 <div>
-                    <h6>Users online</h6>
-                    <ul id="users">
+                    <h3>{userCount} users are online:</h3>
+                    <div id="users">
                         {users.map(({ name, id }) => (
                             <li key={id}>{name}</li>
                         ))}
-                    </ul>
+                    </div>
                 </div>
             </div>
-            
+
             <div className="itemTwo">
                 <Cards />
                 <Answers currentUser={currentUser} />
