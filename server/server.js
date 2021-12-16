@@ -80,7 +80,7 @@ io.on("connection", (socket) => {
         io.emit("userCount", userCount);
         console.log("another user  ", userCount);
     });
-
+//use app locals here
     socket.on("likesCount", (userId, count) => {
         let totalCounts = 0;
         let result = "";

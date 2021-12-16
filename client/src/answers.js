@@ -19,6 +19,11 @@ export default function Answers() {
         socket.on("message", (message) => {
             setMessages((messages) => [...messages, message]);
         });
+
+        socket.on("result", (result) => {
+            nextGame(result);
+            console.log(result);
+        });
     }, []);
 
     useEffect(() => {
@@ -41,10 +46,7 @@ export default function Answers() {
             console.log(userId, count);
             socket.emit("likesCount", userId, count);
         }
-        socket.on("result", (result) => {
-            nextGame(result);
-            console.log(result);
-        });
+
         console.log(userId, count);
     };
 
