@@ -3,6 +3,7 @@ import cards from "./cardListFull";
 import { useState, useEffect } from "react";
 import { socket } from "./socket";
 
+
 export default function Cards() {
     const [cardQuestion, setCardQuestion] = useState("");
 
@@ -20,7 +21,7 @@ export default function Cards() {
     const nextGame = function () {
         confirm("Next round?");
         if (confirm) {
-            socket.emit(nextGame);
+            socket.emit("nextGame");
         }
     };
 
@@ -39,9 +40,9 @@ export default function Cards() {
                     </div>
                 </div>
             </div>
-            <div>
+            {/* <div>
                 <button onClick={() => nextGame()}>Next game</button>
-            </div>
+            </div> */}
         </div>
     );
 }

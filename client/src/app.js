@@ -10,10 +10,10 @@ export default function App() {
     const [currentUser, setCurrentUser] = useState([]);
     const [newUser, setNewUser] = useState([]);
     const [modal, setModal] = useState(true);
-    const [userCount, setUserCount] = useState();
+    const [userCount, setUserCount] = useState(0);
     const [waiting, setWaiting] = useState(false);
     const [userName, setUserName] = useState("");
-
+    console.log("First userCOUNT log", userCount);
     useEffect(() => {
         socket.on("connect", () => {
             socket.emit("username", username);
@@ -24,10 +24,12 @@ export default function App() {
             setCurrentUser(username);
         });
 
-        socket.on("userCount", (userCount) => {
-            setUserCount(userCount);
+        socket.on("userCount", (data) => {
+            setUserCount(data);
+            console.log("userCount", userCount, data);
             if (userCount >= 2) {
                 setWaiting(false);
+                console.log("newusercoutn", userCount, waiting);
             }
         });
 

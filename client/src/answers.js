@@ -34,24 +34,22 @@ export default function Answers() {
 
         if (!isLiked) {
             count++;
+            console.log(userId, count);
             socket.emit("likesCount", userId, count);
         } else if (isLiked) {
             count--;
+            console.log(userId, count);
             socket.emit("likesCount", userId, count);
         }
         socket.on("result", (result) => {
-            console.log("SOCKET result", result);
-            if (result.length) {
-                nextGame(result);
-                console.log("result678u0oo", result);
-            }
+            nextGame(result);
+            console.log(result);
         });
         console.log(userId, count);
     };
 
     const nextGame = (result) => {
         //if user confirms then socket.emit
-        console.log("result", result);
         confirm(result);
         if (confirm) {
             setMessages([]);

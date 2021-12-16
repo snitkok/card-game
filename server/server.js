@@ -9,6 +9,7 @@ const io = require("socket.io")(server, {
     allowRequest: (req, callback) =>
         callback(null, req.headers.referer.startsWith("http://localhost:3000")),
 });
+app.locals.likesCount = 0;
 
 const cookieSessionMiddleware = cookieSession({
     secret: `I am so secret`,
@@ -49,6 +50,9 @@ function selectRandom(array) {
     };
 }
 
+
+
+
 io.on("connection", (socket) => {
     // console.log("socket.id", socket.id);
     //when someone connects to the server we will invoke this callback
@@ -78,18 +82,20 @@ io.on("connection", (socket) => {
     });
 
     socket.on("likesCount", (userId, count) => {
-        console.log("likesCount being emitted", userId, count);
         let totalCounts = 0;
         let result = "";
+        // let usersWithLikes = users;
         for (let user in users) {
             if (users[user].id === userId) {
                 users[user].counter += count;
             }
             totalCounts += users[user].counter;
         }
-        console.log("updated tortal counts", totalCounts);
+        console.log("Total Counts in the round: " + totalCounts);
+        console.log(users);
+
         // if total count of likes among all users is equal to length of users object (we assume all users have voted)
-        if (totalCounts === Object.keys(users).length) {
+        if (totalCounts >= Object.keys(users).length) {
             // we create array of users from users object to be able to apply map function
             const usersArray = Object.values(users);
             // we extract max count of likes (count of likes that the most voted post has)
@@ -103,6 +109,7 @@ io.on("connection", (socket) => {
             );
             // we extract from array of winners just winners names to add them to result string
             const winnerNames = winnersArray.map((winner) => winner.name);
+
             // we create two result strings based on how many users have collected max count of likes.
             // If array of winners more than 1 (we have several players in winners array with max count of likes
             if (winnersArray.length > 1) {
@@ -116,10 +123,16 @@ Would you like to continue?`;
                 )} with ${maxCount} vote(s)!!!
 Would you like to continue?`;
             }
-
             // Send winner to front with winner's answer
             io.emit("result", result);
-            console.log("just emitted results", result, users);
+            // Reset total count of likes to 0;
+            totalCounts = 0;
+            // Reset likes counter of each player to 0;
+            for (let user in users) {
+                users[user].counter = 0;
+            }
+            console.log("Total Counts After the round: " + totalCounts);
+            console.log(users);
         }
     });
 
