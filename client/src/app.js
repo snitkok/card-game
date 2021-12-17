@@ -73,7 +73,7 @@ export default function App() {
                     <div id="modal-content">
                         <h3>Waiting for other users to join</h3>
                         <h3>Now {userCount} users are online</h3>
-                        <img src="./waiting.gif" className="waitingGif"/>
+                        <img src="./waiting.gif" className="waitingGif" />
                     </div>
                 </div>
             ) : (
@@ -86,21 +86,25 @@ export default function App() {
                             Cards Against Humanity is a fill-in-the-blank party
                             game that turns your awkward personality and
                             lackluster social skills into hours of fun! <br />
-                            Wow.
-                            <br /> The game is simple. Each round, computer asks
-                            a question from a black card, and everyone else
-                            answers with their funniest white card.
+                            <div className="pulsating">Wow.</div>The game is
+                            simple. Each round, computer asks a question from a
+                            black card, and everyone else answers with their
+                            funniest white card.
                         </h3>
-                        <p>
-                            <b>Still want to start the game?</b>
-                        </p>
+                        <br />
+                        <div>
+                            <h3 className="start">
+                                Still want to start the game?
+                            </h3>
+                        </div>
                         <br />
                         <button
+                            className="buttonStart"
                             onClick={() => {
                                 gameStart();
                             }}
                         >
-                            Start
+                            <span>Start</span>
                         </button>
                     </div>
                 </div>
@@ -108,16 +112,23 @@ export default function App() {
                 <p></p>
             )}
             <div className="itemOne">
-                <h1>Hello {currentUser} </h1>
-                <h3 className="recentUser">
-                    <span className="newUserName">{newUser.name}</span> just
-                    joined the game
-                </h3>
+                <div className="firstLine">
+                    <h1>
+                        Hello <span style={{ color: "white" }}>{currentUser} ❣️</span>
+                    </h1>
+                    {/* <h3 className="recentUser">
+                        <span className="newUserName">{newUser.name}</span> just
+                        joined the game
+                    </h3> */}
+                </div>
                 <div>
-                    <h3>{userCount} users are online:</h3>
+                    <h3>
+                        <span style={{ color: "white" }}>{userCount}</span>{" "}
+                        users are online:
+                    </h3>
                     <div id="users">
                         {users.map(({ name, id }) => (
-                            <li key={id}>{name}</li>
+                            <p key={id}>⭐️{name}</p>
                         ))}
                     </div>
                 </div>

@@ -18,6 +18,7 @@ const Likes = ({ likeResults, userId }) => {
                         cursor: "pointer",
                     }}
                     onClick={handleLike}
+                    className="heart"
                 >
                     &hearts;
                 </span>

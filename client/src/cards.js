@@ -3,7 +3,6 @@ import cards from "./cardListFull";
 import { useState, useEffect } from "react";
 import { socket } from "./socket";
 
-
 export default function Cards() {
     const [cardQuestion, setCardQuestion] = useState("");
 
@@ -14,7 +13,7 @@ export default function Cards() {
 
         socket.on("selectCard", (chooser) => {
             setCardQuestion(chooser);
-            console.log("selecting card")
+            console.log("selecting card");
         });
     });
 
@@ -36,7 +35,7 @@ export default function Cards() {
                         <br />
                     </div>
                     <div className="flip-card-back">
-                        <h1>Nothing to see here</h1>
+                        <img src="./horrible.gif" className="cardsBack" />
                     </div>
                 </div>
             </div>

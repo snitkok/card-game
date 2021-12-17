@@ -116,18 +116,22 @@ export default function Answers() {
     return (
         <div className="answers">
             <div className="playGround">
-                <h3></h3>
+                <span className="intro">
+                    <p>Make your move</p>
+                </span>
+
                 <hr />
                 <div id="messages">
                     {console.log(" 🐈", messages)}
                     {messages.map(({ text, user }, index) => (
                         <div key={index} className="playedCardsContainer">
                             <div className="playedCards">
-                                {user.name}
+                                {user.name}<hr className="divider"/>
                                 <Likes
                                     likeResults={likeResults}
                                     userId={user.id}
                                 />
+                                
                                 {text}
                             </div>
                         </div>
@@ -147,16 +151,18 @@ export default function Answers() {
                     />
                 ))}
             </div>
+
             <div>
                 {button ? (
-                    <button
+                    <span
+                        className="playingCards"
                         onClick={() => {
                             chooser();
                             handleButton();
                         }}
                     >
-                        Get playing cards
-                    </button>
+                        <a href="#"></a>
+                    </span>
                 ) : (
                     <p></p>
                 )}

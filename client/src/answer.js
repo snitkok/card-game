@@ -3,7 +3,7 @@ export default function Answer({ answer, changedText, index, submit }) {
         <div>
             <div className="singleAnswer">
                 <h3>Your card</h3>
-                <hr/>
+                <hr className="dividerTwo" />
                 <h4
                     onClick={() => {
                         changedText(index);
