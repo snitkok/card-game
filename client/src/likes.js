@@ -12,19 +12,19 @@ const Likes = ({ likeResults, userId }) => {
         <div>
             {isLiked ? (
                 <span
+                    className="heart"
                     style={{
                         fontSize: "2.50rem",
                         color: "#ff0000",
                         cursor: "pointer",
                     }}
                     onClick={handleLike}
-                    className="heart"
                 >
                     &hearts;
                 </span>
             ) : (
                 <span
-                    style={{ fontSize: "2rem", cursor: "pointer" }}
+                    style={{ fontSize: "2.50rem", cursor: "pointer" }}
                     onClick={handleLike}
                 >
                     &#9825;

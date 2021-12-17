@@ -2,7 +2,7 @@ import React from "react";
 import Cards from "./cards";
 import Answers from "./answers";
 import { useState, useEffect } from "react";
-let username = prompt("what is your username");
+let username = prompt("Ready to start? Enter your username");
 import { socket } from "./socket";
 
 export default function App() {

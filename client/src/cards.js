@@ -29,7 +29,7 @@ export default function Cards() {
             <div className="cards flip-card">
                 <div className="cardsContent flip-card-inner">
                     <div className="flip-card-front">
-                        <h1>Fill in the missing word</h1>
+                        <h1>Complete the sentence</h1>
                         <hr />
                         <h2>{cardQuestion}</h2>
                         <br />
